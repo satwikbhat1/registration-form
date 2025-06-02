@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createAuthToken } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,20 +6,15 @@ export async function POST(request: NextRequest) {
 
     // Mock authentication - replace with real authentication
     if (username === "admin" && password === "admin123") {
-      const token = createAuthToken("admin")
-
-      const response = NextResponse.json({
-        success: true,
-        message: "Login successful",
-      })
+      // In a real app, you'd create a JWT token or session
+      const response = NextResponse.json({ success: true })
 
       // Set authentication cookie
-      response.cookies.set("admin-token", token, {
+      response.cookies.set("admin-token", "mock-jwt-token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: 60 * 60 * 24 * 7, // 7 days
-        path: "/",
       })
 
       return response
@@ -28,7 +22,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
   } catch (error) {
-    console.error("Login error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

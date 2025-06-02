@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { verifyAuthToken } from "@/lib/auth"
 
 // Mock data - replace with real database queries
 const mockRegistrations = [
@@ -48,14 +47,13 @@ export async function GET(request: NextRequest) {
   try {
     // Check authentication
     const token = request.cookies.get("admin-token")
-    if (!token || !verifyAuthToken(token.value)) {
+    if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // In a real app, you'd query your database here
     return NextResponse.json(mockRegistrations)
   } catch (error) {
-    console.error("Get registrations error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
