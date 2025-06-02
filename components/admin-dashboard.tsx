@@ -8,8 +8,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, Eye, Edit, Trash2, Download, Users, FileText, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  Search,
+  Eye,
+  Edit,
+  Trash2,
+  Download,
+  Users,
+  FileText,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+} from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 interface Registration {
   id: string
@@ -35,6 +48,7 @@ export function AdminDashboard() {
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
+  const router = useRouter()
 
   const itemsPerPage = 10
 
@@ -147,6 +161,24 @@ export function AdminDashboard() {
     today: registrations.filter((r) => new Date(r.createdAt).toDateString() === new Date().toDateString()).length,
   }
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/admin/logout", {
+        method: "POST",
+      })
+
+      if (response.ok) {
+        router.push("/admin/login")
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to logout",
+        variant: "destructive",
+      })
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -167,10 +199,16 @@ export function AdminDashboard() {
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600">Manage registration applications</p>
           </div>
-          <Button onClick={exportData} className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export Data
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button onClick={exportData} className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              Export Data
+            </Button>
+            <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}

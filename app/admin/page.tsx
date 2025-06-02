@@ -1,19 +1,9 @@
-import { redirect } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
 import { AdminDashboard } from "@/components/admin-dashboard"
 
-// In a real app, you'd check authentication here
-async function checkAuth() {
-  // Placeholder for authentication check
-  // return await getServerSession()
-  return true
-}
-
 export default async function AdminPage() {
-  const isAuthenticated = await checkAuth()
-
-  if (!isAuthenticated) {
-    redirect("/admin/login")
-  }
+  // This will redirect to login if not authenticated
+  await requireAuth()
 
   return <AdminDashboard />
 }
